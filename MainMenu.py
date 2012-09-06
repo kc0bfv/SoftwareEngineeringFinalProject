@@ -2,11 +2,13 @@
 
 from GenericWidgets import Frame, Root, Button, Image
 import Icon
+from TrainingCorpusDescriber import TrainingCorpusDescriberSubwindow
+from TestCorpusDescriber import TestCorpusDescriberSubwindow
 
 class MainMenuWindow(Frame):
 	def __init__(self, parent, coordinator=None):
 		# Call the parent constructors
-		super(MainMenuWindow, self).__init__(parent)
+		super(MainMenuWindow, self).__init__(parent, fill=True)
 
 		# Initialize class variables
 		self.coordinator = coordinator
@@ -26,7 +28,7 @@ class MainMenuWindow(Frame):
 				"sticky": "nsew"})
 		
 		self.__invokeTestCorpusDescButton = Button(self, text="Invoke Test" + 
-				"\nCorpus Describer", callback=self.__testCorpusButtonCallback, pady=2)
+				"\nCorpus Describer", callback=self.__testCorpusButtonCallback)
 		self.__invokeTestCorpusDescButton.grid({"row": 2, "column": 1,
 				"rowspan": 2, "sticky": "nsew"})
 		
@@ -60,6 +62,11 @@ class MainMenuCoordinator():
 	def __init__(self, window=None):
 		# Initialize class variables
 		self.window = window
+		self.tester = None
+		self.trainer = None
+		self.trainingCorpusDescriber = None
+		self.testCorpusDescriber = None
+		self.firmwareDisassembler = None
 
 	def invokeTester(self):
 		pass
@@ -68,13 +75,25 @@ class MainMenuCoordinator():
 		pass
 
 	def invokeTestCorpusDesc(self):
-		pass
+		if self.testCorpusDescriber is None:
+			self.testCorpusDescriber = TestCorpusDescriberSubwindow(
+					self.window,
+					closeCallback=self._testCorpusDescriberClosedCallback)
 
 	def invokeTrainCorpusDesc(self):
-		pass
+		if self.trainingCorpusDescriber is None:
+			self.trainingCorpusDescriber = TrainingCorpusDescriberSubwindow(
+					self.window,
+					closeCallback=self._trainingCorpusDescriberClosedCallback)
 
 	def invokeFirmwareDisassembler(self):
 		pass
+
+	def _trainingCorpusDescriberClosedCallback(self):
+		self.trainingCorpusDescriber = None
+
+	def _testCorpusDescriberClosedCallback(self):
+		self.testCorpusDescriber = None
 
 class MainMenu(Root):
 	def __init__(self):
